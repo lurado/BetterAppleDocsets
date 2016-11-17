@@ -1,0 +1,7 @@
+#!/usr/bin/env ruby
+require 'hyphen'
+begin
+  Hyphen::Runner.run(ARGV)
+rescue Hyphen::Error => e
+  abort e.message
+end
