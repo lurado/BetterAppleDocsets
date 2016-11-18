@@ -29,7 +29,9 @@ module Hyphen
 
       cleanup_database(db)
       
-      override_styles docset_path
+      override_styles(docset_path)
+
+      change_identifiers(docset_path, options[:platforms])
     end
 
     def self.dump_docset(options)
@@ -71,7 +73,10 @@ module Hyphen
         abort unless exit_status.success?
       end
 
-      return docset_path
+      new_docset_path = File.join options[:output_path], "#{capitalize_platforms(options[:platforms]).join('_')}_API_Reference.docset"
+      FileUtils.mv docset_path, new_docset_path
+
+      return new_docset_path
     end
 
     def self.drop_language(db, language)
@@ -84,10 +89,14 @@ module Hyphen
       db_path.slice(0..(db_path.index('#') - 1))
     end
 
+    def self.capitalize_platforms(platforms)
+      platforms.map { |p| p.to_s.gsub 'os', 'OS' }
+    end
+
     def self.filter_platforms_and_link_types(platforms, docset_path, db)
       section "Linking types"
 
-      platforms = platforms.map { |p| p.to_s.gsub 'os', 'OS' }
+      platforms = capitalize_platforms platforms
       grep_command = "grep -E 'Available in (#{platforms.join('|')})' -m 1"
       documents_path = File.join docset_path, "Contents/Resources/Documents/"
 
@@ -107,6 +116,7 @@ module Hyphen
 
         index += 1
       end
+      puts "Progress: 100%"
 
       section "Filtering platforms"
       count = ids_to_delete.size
@@ -121,15 +131,16 @@ module Hyphen
 
         index += 1
       end
+      puts "Progress: 100%"
     end
 
     def self.link_types(file_path, db)
-      type_regexp = /(?:\s)([A-Z]{2,}(?:[A-Z][a-z]+)+)/
+      type_regexp = /(\s|<code>|&lt;|"syntax-type">)([A-Z]{2,}(?:[A-Z][a-z]+)+)/
 
       return if `grep -E '#{type_regexp.source}' -m 1 #{file_path}`.empty?
       content = IO.read file_path
 
-      content.gsub!(/(\s)([A-Z]{2,}(?:[A-Z][a-z]+)+)/) do |match|
+      content.gsub!(type_regexp) do |match|
         type = $2
         file = file_for_type(type, db)
         next type unless file
@@ -163,6 +174,12 @@ module Hyphen
       return file.empty? ? nil : file
     end
 
+    def self.cleanup_database(db)
+      section "Optimizing database"
+
+      db.execute("VACUUM")
+    end
+
     def self.override_styles(docset_path)
       section "Adjusting styles"
 
@@ -171,10 +188,13 @@ module Hyphen
       `cat #{overrides_path} >> #{css_path}`
     end
 
-    def self.cleanup_database(db)
-      section "Optimizing database"
-
-      db.execute("VACUUM")
+    def self.change_identifiers(docset_path, platforms)
+      section "Changing name"
+      
+      plist_path = File.join docset_path, 'Contents/Info.plist'
+      name = "#{capitalize_platforms(platforms).join(' ')} API Reference"
+      `/usr/libexec/PlistBuddy -c "set :CFBundleName #{name}" #{plist_path}`
+      `/usr/libexec/PlistBuddy -c "set :DocSetPlatformFamily #{platforms.map(&:to_s).join}" #{plist_path}`
     end
 
   end
