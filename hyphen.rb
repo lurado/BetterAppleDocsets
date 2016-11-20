@@ -8,7 +8,7 @@ require 'bundler'
 Bundler.require
 
 class Hyphen
-  VERSION = '0.1.0'
+  VERSION = '1.0.0'
   ALLOWED_LANGUAGES = [:swift, :objc]
   ALLOWED_PLATFORMS = [:ios, :macos, :watchos, :tvos]
 
