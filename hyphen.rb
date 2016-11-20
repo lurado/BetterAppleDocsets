@@ -90,12 +90,12 @@ class Hyphen
   def dump_docset(options)
     apple_api_reference_docset_path = File.expand_path "~/Library/Application Support/Dash/DocSets/Apple_API_Reference/Apple_API_Reference.docset"
     unless File.exists? apple_api_reference_docset_path
-      abort "Unable to find Dash Apple_API_Reference.docset. Expected at '#{apple_api_reference_docset_path}'. Check that the 'Apple API Reference' docset is installed."
+      abort "Unable to find Dash Apple_API_Reference.docset at '#{apple_api_reference_docset_path}'. Check that the 'Apple API Reference' docset is installed."
     end
 
     dash_apple_docs_helper_path = File.join(apple_api_reference_docset_path, "Contents/Resources/Documents/Apple Docs Helper")
     unless File.exists? dash_apple_docs_helper_path
-      abort "Apple_API_Reference.docset does not contain 'Apple Docs Helper'. Maybe update to the latest docs?"
+      abort "Apple_API_Reference.docset does not contain 'Apple Docs Helper'. Please re-install the Apple API Reference from the Downloads pane in the Dash settings."
     end
 
     options[:output_path] = File.expand_path options[:output_path]
@@ -105,18 +105,18 @@ class Hyphen
     section "Dumping docset"
 
     docset_path = File.join options[:output_path], "Apple_API_Reference.docset"
-
     if File.exists? docset_path
       puts "Found old docset. Deleting..."
       FileUtils.rm_rf docset_path
     end
+    
     temp_docset_path = File.join options[:output_path], "Apple_API_Reference.incomplete.docset"
     if File.exists? temp_docset_path
       puts "Found old temp docset. Deleting..."
       FileUtils.rm_rf temp_docset_path
     end
     
-    command = "#{dash_apple_docs_helper_path.shellescape} --dump --output '#{options[:output_path].shellescape}'"
+    command = "#{dash_apple_docs_helper_path.shellescape} --dump --output #{options[:output_path].shellescape}"
     Open3.popen2e(command) do |stdin, stdout_err, wait_thr|
       while line = stdout_err.gets
         puts line
@@ -139,7 +139,7 @@ class Hyphen
   end
 
   def extract_filename(db_path)
-    db_path.slice(0..(db_path.index('#') - 1))
+    db_path[/[^#]*/]
   end
 
   def capitalize_platforms(platforms)
@@ -160,7 +160,7 @@ class Hyphen
       puts "Progress: #{(100 * index/count.to_f).round(2)}%..." if index % 1000 == 0
 
       file_path = documents_path + extract_filename(row[1])
-      wrong_platform = `#{grep_command} #{file_path}`.empty?
+      wrong_platform = `#{grep_command} #{file_path.shellescape}`.empty?
       if wrong_platform
         ids_to_delete << row[0]
       else
@@ -190,7 +190,7 @@ class Hyphen
   def link_types(file_path, db)
     type_regexp = /(\s|<code>|&lt;|"syntax-type">)([A-Z]{2,}(?:[A-Z][a-z]+)+)/
 
-    return if `grep -E '#{type_regexp.source}' -m 1 #{file_path}`.empty?
+    return if `grep -E '#{type_regexp.source}' -m 1 #{file_path.shellescape}`.empty?
     content = IO.read file_path
 
     content.gsub!(type_regexp) do |match|
@@ -235,16 +235,17 @@ class Hyphen
 
     overrides_path = File.expand_path 'style_overrides.css'
     css_path = File.join(docset_path, "Contents/Resources/Documents/Resources/style.css")
-    `cat #{overrides_path} >> #{css_path}`
+    `cat #{overrides_path.shellescape} >> #{css_path.shellescape}`
   end
 
   def change_identifiers(docset_path, platforms)
     section "Changing name"
     
     plist_path = File.join docset_path, 'Contents/Info.plist'
-    name = "#{capitalize_platforms(platforms).join(' ')} API Reference"
-    `/usr/libexec/PlistBuddy -c "set :CFBundleName #{name}" #{plist_path}`
-    `/usr/libexec/PlistBuddy -c "set :DocSetPlatformFamily #{platforms.map(&:to_s).join}" #{plist_path}`
+    name = "#{capitalize_platforms(platforms).join('/')} API Reference"
+    family = platforms.count == 1 ? platforms.first.to_s : "hyphen"
+    `/usr/libexec/PlistBuddy -c "set :CFBundleName #{name}" #{plist_path.shellescape}`
+    `/usr/libexec/PlistBuddy -c "set :DocSetPlatformFamily #{family}" #{plist_path.shellescape}`
   end
 end
 
