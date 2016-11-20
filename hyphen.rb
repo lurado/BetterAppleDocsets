@@ -21,20 +21,20 @@ class Hyphen
 
   def parse_options(args)
     options = { 
-      languages: [:objc], 
-      platforms: [:ios],
+      languages: [], 
+      platforms: [],
       output_path: Dir.getwd
     }
 
     parser = OptionParser.new do |opts|
-      opts.banner = 'Hyphen - Making Apple Docs for Dash great again'
+      opts.banner = 'Hyphen - Improving the unified Apple API Reference in Dash'
       opts.separator ''
       opts.separator 'Usage: hyphen [-l language] [-p platform] [-o output_path]'
       opts.separator ''
-      opts.on('-l', '--language LANGUAGE', ALLOWED_LANGUAGES, "Languange that should be kept. May be specified multiple times. Possible values: #{ALLOWED_LANGUAGES.join(', ')}. Default value: #{options[:languages].join(', ')}.") do |l|
+      opts.on('-l', '--language LANGUAGE', ALLOWED_LANGUAGES, "Language that should be kept. May be specified multiple times. Possible values: #{ALLOWED_LANGUAGES.join(', ')}.") do |l|
         options[:languages] << l.to_sym
       end
-      opts.on('-p', '--platform PLATFORM', ALLOWED_PLATFORMS, "Platforms that should be kept. May be specified multiple times. Possible values: #{ALLOWED_PLATFORMS.join(', ')}. Default value: #{options[:platforms].join(', ')}.") do |p|
+      opts.on('-p', '--platform PLATFORM', ALLOWED_PLATFORMS, "Platforms that should be kept. May be specified multiple times. Possible values: #{ALLOWED_PLATFORMS.join(', ')}.") do |p|
         options[:platforms] << p.to_sym
       end
       opts.on('-o', '--output OUTPUT_PATH', 'Destination path where the docset will be created. Defaults to the current directory.') do |o|
@@ -53,9 +53,14 @@ class Hyphen
     begin
       parser.parse! args
     rescue OptionParser::ParseError => e
-      $stderr.puts e.message
-      exit false
+      # Manually print the error and exit.
+      # Without this begin/rescue block, a long stacktrace would flood the terminal.
+      abort e.message
     end
+    
+    abort parser.help unless ARGV.empty?
+    abort "#{parser.help}\nYou must specify at least one language to keep." if options[:languages].empty?
+    abort "#{parser.help}\nYou must specify at least one platform to keep." if options[:platforms].empty?
 
     return options
   end
