@@ -242,8 +242,18 @@ class Hyphen
     section "Changing name"
     
     plist_path = File.join docset_path, 'Contents/Info.plist'
+    
     name = "#{capitalize_platforms(platforms).join('/')} API Reference"
-    family = platforms.count == 1 ? platforms.first.to_s : "hyphen"
+    
+    if platforms == [:macos]
+      # Bundles with the "osx" family will be displayed with a nice Finder icon in Dash
+      family = "osx"
+    elsif platforms.count == 1
+      family = platforms.first.to_s
+    else
+      family = "hyphen"
+    end
+    
     `/usr/libexec/PlistBuddy -c "set :CFBundleName #{name}" #{plist_path.shellescape}`
     `/usr/libexec/PlistBuddy -c "set :DocSetPlatformFamily #{family}" #{plist_path.shellescape}`
   end
