@@ -34,7 +34,7 @@ class Hyphen
       opts.on('-l', '--language LANGUAGE', ALLOWED_LANGUAGES, "Language that should be kept. May be specified multiple times. Possible values: #{ALLOWED_LANGUAGES.join(', ')}.") do |l|
         options[:languages] << l.to_sym
       end
-      opts.on('-p', '--platform PLATFORM', ALLOWED_PLATFORMS, "Platforms that should be kept. May be specified multiple times. Possible values: #{ALLOWED_PLATFORMS.join(', ')}.") do |p|
+      opts.on('-p', '--platform PLATFORM', ALLOWED_PLATFORMS, "Platform that should be kept. May be specified multiple times. Possible values: #{ALLOWED_PLATFORMS.join(', ')}.") do |p|
         options[:platforms] << p.to_sym
       end
       opts.on('-o', '--output OUTPUT_PATH', 'Destination path where the docset will be created. Defaults to the current directory.') do |o|

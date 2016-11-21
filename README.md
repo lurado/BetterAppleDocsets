@@ -2,13 +2,13 @@
 
 [Dash](https://kapeli.com/dash) supports Apple’s new, unified API reference for macOS, iOS, tvOS and watchOS. However:
 
-* you cannot filter by platform anymore.
+* you cannot filter by platform.
 * types are not clickable.
 * information density suffers from huge headlines and generous whitespace.
 
 <img src="images/before.png" width="600">
 
-Hyphen is a [Ruby script](./hyphen.rb) that extracts only a configurable subset of the API reference and tweaks the [CSS](./style_overrides.css) at the same time.
+Hyphen is a [Ruby script](./hyphen.rb) that extracts a configurable subset of the API reference and tweaks the [CSS](./style_overrides.css) at the same time.
 
 <img src="images/after.png" width="600">
 
@@ -24,7 +24,7 @@ bundle install # hyphen depends on the sqlite3 gem
 
 Run `./hyphen.rb --help` for the full command-line reference.
 
-If you see this warning while adding your docset to Dash, simply ignore it:
+If you see this warning while adding your docset to Dash, simply ignore it and click _Install_:
 
 <img src="images/warning.png" width="410">
 
