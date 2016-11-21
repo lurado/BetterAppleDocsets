@@ -27,7 +27,7 @@ class Hyphen
     }
 
     parser = OptionParser.new do |opts|
-      opts.banner = 'Hyphen - Improving the unified Apple API Reference in Dash'
+      opts.banner = 'Hyphen - Improving Apple’s API Reference in Dash'
       opts.separator ''
       opts.separator 'Usage: hyphen [-l language] [-p platform] [-o output_path]'
       opts.separator ''
