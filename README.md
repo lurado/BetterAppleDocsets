@@ -6,11 +6,11 @@
 * types are not clickable.
 * information density suffers from huge headlines and generous whitespace.
 
-<img src="before.png" width="600">
+<img src="images/before.png" width="600">
 
 Hyphen is a [Ruby script](./hyphen.rb) that extracts only a configurable subset of the API reference and tweaks the [CSS](./style_overrides.css) at the same time.
 
-<img src="after.png" width="600">
+<img src="images/after.png" width="600">
 
 ## Quick start
 
@@ -24,6 +24,10 @@ bundle install # hyphen depends on the sqlite3 gem
 
 Run `./hyphen.rb --help` for the full command-line reference.
 
+If you see this warning while adding your docset to Dash, simply ignore it:
+
+<img src="images/warning.png" width="410">
+
 ## Some details
 
 Hyphen requires the “Apple API Reference” docset to be installed in Dash (latest version).
@@ -35,6 +39,8 @@ It will not touch the existing docset, but instead create a new docset by runnin
 3. Remove each platform that has not been whitelisted with `--platform=...os`, and add hyperlinks to type names at the same time.
 4. Append [style_overrides.css](./style_overrides.css) to the styles of the extracted docset.
 5. Change the name and keyword of the generated docset in the docset’s Info.plist file.
+
+The best place to start reading and hacking the source code is the method `Hyphen#run(args)`.
 
 ## Why does Hyphen remove languages (Objective-C/Swift)?
 

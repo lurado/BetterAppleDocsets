@@ -85,6 +85,9 @@ class Hyphen
     override_styles(docset_path)
 
     change_identifiers(docset_path, options[:platforms])
+    
+    puts "Double-click the generated docset to add it to Dash."
+    puts "Please ignore the warning in Dash about installing an outdated docset." if options[:platforms].size == 1
   end
 
   def dump_docset(options)
