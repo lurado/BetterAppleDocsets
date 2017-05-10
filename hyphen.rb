@@ -9,8 +9,8 @@ require 'sqlite3'
 
 class Hyphen
   VERSION = '1.0.0'
-  ALLOWED_LANGUAGES = [:swift, :objc]
-  ALLOWED_PLATFORMS = [:ios, :macos, :watchos, :tvos]
+  LANGUAGES = [:swift, :objc]
+  PLATFORMS = [:ios, :macos, :watchos, :tvos]
 
   def section(message)
     i = message.length + 6
@@ -20,8 +20,8 @@ class Hyphen
   end
 
   def parse_options(args)
-    options = { 
-      languages: [], 
+    options = {
+      languages: [],
       platforms: [],
       output_path: Dir.getwd
     }
@@ -31,10 +31,10 @@ class Hyphen
       opts.separator ''
       opts.separator 'Usage: hyphen [-l language] [-p platform] [-o output_path]'
       opts.separator ''
-      opts.on('-l', '--language LANGUAGE', ALLOWED_LANGUAGES, "Language that should be kept. May be specified multiple times. Possible values: #{ALLOWED_LANGUAGES.join(', ')}.") do |l|
+      opts.on('-l', '--language LANGUAGE', LANGUAGES, "Language that should be kept. May be specified multiple times. Possible values: #{LANGUAGES.join(', ')}.") do |l|
         options[:languages] << l.to_sym
       end
-      opts.on('-p', '--platform PLATFORM', ALLOWED_PLATFORMS, "Platform that should be kept. May be specified multiple times. Possible values: #{ALLOWED_PLATFORMS.join(', ')}.") do |p|
+      opts.on('-p', '--platform PLATFORM', PLATFORMS, "Platform that should be kept. May be specified multiple times. Possible values: #{PLATFORMS.join(', ')}.") do |p|
         options[:platforms] << p.to_sym
       end
       opts.on('-o', '--output OUTPUT_PATH', 'Destination path where the docset will be created. Defaults to the current directory.') do |o|
@@ -57,10 +57,10 @@ class Hyphen
       # Without this begin/rescue block, a long stacktrace would flood the terminal.
       abort e.message
     end
-    
+
     abort parser.help unless ARGV.empty?
-    abort "#{parser.help}\nYou must specify at least one language to keep." if options[:languages].empty?
-    abort "#{parser.help}\nYou must specify at least one platform to keep." if options[:platforms].empty?
+    abort parser.help + "\nYou must specify at least one language to keep." if options[:languages].empty?
+    abort parser.help + "\nYou must specify at least one platform to keep." if options[:platforms].empty?
 
     return options
   end
@@ -74,18 +74,18 @@ class Hyphen
     abort "Unable to find docset database. Expected at '#{docset_db_path}'." unless File.exists? docset_db_path
     db = SQLite3::Database.new docset_db_path
 
-    ALLOWED_LANGUAGES.each do |lang|
+    LANGUAGES.each do |lang|
       drop_language(db, lang) unless options[:languages].include? lang
     end
 
     filter_platforms_and_link_types(options[:platforms], docset_path, db)
 
     cleanup_database(db)
-    
+
     override_styles(docset_path)
 
     change_identifiers(docset_path, options[:platforms])
-    
+
     puts "Double-click the generated docset to add it to Dash."
     puts "Please ignore the warning in Dash about installing an outdated docset." if options[:platforms].size == 1
   end
@@ -112,13 +112,13 @@ class Hyphen
       puts "Found old docset. Deleting..."
       FileUtils.rm_rf docset_path
     end
-    
+
     temp_docset_path = File.join options[:output_path], "Apple_API_Reference.incomplete.docset"
     if File.exists? temp_docset_path
       puts "Found old temp docset. Deleting..."
       FileUtils.rm_rf temp_docset_path
     end
-    
+
     command = "#{dash_apple_docs_helper_path.shellescape} --dump --output #{options[:output_path].shellescape}"
     Open3.popen2e(command) do |stdin, stdout_err, wait_thr|
       while line = stdout_err.gets
@@ -208,7 +208,7 @@ class Hyphen
   def file_for_type(type, db)
     @type_cache ||= {}
     @type_lookup_statement ||= db.prepare("SELECT path FROM searchIndex WHERE name = ? ORDER BY type LIMIT 1")
-  
+
     file = @type_cache[type]
     return file if file
 
@@ -243,11 +243,11 @@ class Hyphen
 
   def change_identifiers(docset_path, platforms)
     section "Changing name"
-    
+
     plist_path = File.join docset_path, 'Contents/Info.plist'
-    
+
     name = "#{capitalize_platforms(platforms).join('/')} API Reference"
-    
+
     if platforms == [:macos]
       # Bundles with the "osx" family will be displayed with a nice Finder icon in Dash
       family = "osx"
@@ -256,7 +256,7 @@ class Hyphen
     else
       family = "hyphen"
     end
-    
+
     `/usr/libexec/PlistBuddy -c "set :CFBundleName #{name}" #{plist_path.shellescape}`
     `/usr/libexec/PlistBuddy -c "set :DocSetPlatformFamily #{family}" #{plist_path.shellescape}`
   end
