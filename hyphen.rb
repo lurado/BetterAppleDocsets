@@ -5,7 +5,7 @@ require 'shellwords'
 require 'open3'
 require 'optparse'
 require 'bundler'
-Bundler.require
+require 'sqlite3'
 
 class Hyphen
   VERSION = '1.0.0'

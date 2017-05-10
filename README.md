@@ -16,7 +16,7 @@ Hyphen is a [Ruby script](./hyphen.rb) that extracts a configurable subset of th
 
 ```bash
 git clone https://github.com/lurado/hyphen.git && cd hyphen
-bundle install # hyphen depends on the sqlite3 gem
+gem install sqlite3 # or "sudo gem install sqlite3" if you use Apple’s Ruby
 ./hyphen.rb --language=objc --platform=ios --output=~/Desktop
 # this takes a while, let it run in the background...
 # double-click the generated ~/Desktop/iOS_API_Reference.docset
