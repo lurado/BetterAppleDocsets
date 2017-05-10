@@ -191,7 +191,7 @@ class Hyphen
   end
 
   def link_types(file_path, db)
-    type_regexp = /(\s|<code>|&lt;|"syntax-type">)([A-Z]{2,}(?:[A-Z][a-z]+)+)/
+    type_regexp = /(\s|<code>|&lt;|"syntax-type">)(BOOL|SEL|IMP|Class|([A-Z]{3,}[a-z][A-Za-z0-9]+))/
 
     return if `grep -E '#{type_regexp.source}' -m 1 #{file_path.shellescape}`.empty?
     content = IO.read file_path
