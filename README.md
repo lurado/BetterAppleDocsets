@@ -6,11 +6,11 @@
 * types are not clickable.
 * information density suffers from huge headlines and generous whitespace.
 
-<img src="images/before.png" width="600">
+<img src="screenshots/before.png" width="600">
 
 Hyphen is a [Ruby script](./hyphen.rb) that extracts a configurable subset of the API reference and tweaks the [CSS](./style_overrides.css) at the same time.
 
-<img src="images/after.png" width="600">
+<img src="screenshots/after.png" width="600">
 
 ## Quick start
 
@@ -26,7 +26,7 @@ Run `./hyphen.rb --help` for the full command-line reference.
 
 If you see this warning while adding your docset to Dash, simply ignore it and click _Install_:
 
-<img src="images/warning.png" width="410">
+<img src="screenshots/warning.png" width="410">
 
 ## Some details
 
