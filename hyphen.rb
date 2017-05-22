@@ -228,13 +228,13 @@ class Hyphen
   end
 
   def cleanup_database(db)
-    section "Optimizing database"
+    section "Cleaning up database"
 
     db.execute("VACUUM")
   end
 
   def override_styles(docset_path)
-    section "Adjusting styles"
+    section "Overriding styles"
 
     css_path = File.join(docset_path, "Contents/Resources/Documents/Resources/style.css")
     File.open(css_path, "a") do |css|
@@ -243,7 +243,7 @@ class Hyphen
   end
 
   def change_identifiers(docset_path, platforms)
-    section "Changing name"
+    section "Changing name and identifier of the docset"
 
     plist_path = File.join docset_path, 'Contents/Info.plist'
 
