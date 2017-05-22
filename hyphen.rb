@@ -236,9 +236,10 @@ class Hyphen
   def override_styles(docset_path)
     section "Adjusting styles"
 
-    overrides_path = File.expand_path 'style_overrides.css'
     css_path = File.join(docset_path, "Contents/Resources/Documents/Resources/style.css")
-    `cat #{overrides_path.shellescape} >> #{css_path.shellescape}`
+    File.open(css_path, "a") do |css|
+      css.write DATA.read
+    end
   end
 
   def change_identifiers(docset_path, platforms)
@@ -263,3 +264,31 @@ class Hyphen
 end
 
 Hyphen.new.run(ARGV)
+
+__END__
+
+.pagetitle {
+  margin-top: 10px;
+}
+
+.section-content {
+  margin: 12px auto;
+}
+
+.topic-abstract p {
+  margin: 0 0;
+}
+
+.topic-abstract {
+  margin-bottom: 0px;
+}
+
+h1 {
+  font-size: 36px;
+  margin: 50px 0 10px 0;
+}
+
+h2 {
+  font-size: 24px;
+  margin: 18px 0;
+}
