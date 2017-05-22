@@ -7,7 +7,7 @@ require 'optparse'
 require 'bundler'
 require 'sqlite3'
 
-class Hyphen
+class BetterAppleDocsets
   VERSION = '1.0.0'
   LANGUAGES = [:swift, :objc]
   PLATFORMS = [:ios, :macos, :watchos, :tvos]
@@ -27,9 +27,9 @@ class Hyphen
     }
 
     parser = OptionParser.new do |opts|
-      opts.banner = 'Hyphen - Improving Apple’s API Reference in Dash'
+      opts.banner = 'Better Apple Docsets - Fine-tuned Apple API Docsets for Dash'
       opts.separator ''
-      opts.separator 'Usage: ruby hyphen.rb [-l language] [-p platform] [-o output_path]'
+      opts.separator "Usage: ruby #{File.basename __FILE__} [-l language] [-p platform] [-o output_path]"
       opts.separator ''
       opts.on('-l', '--language LANGUAGE', LANGUAGES, "Language that should be kept. May be specified multiple times. Possible values: #{LANGUAGES.join(', ')}.") do |l|
         options[:languages] << l.to_sym
@@ -45,11 +45,11 @@ class Hyphen
         exit
       end
       opts.on('--version', 'Print the version number and exit.') do
-        puts "Hyphen version #{VERSION}"
+        puts "#{self.class.name} version #{VERSION}"
         exit
       end
       opts.separator ''
-      opts.separator 'Example: ruby hyphen.rb -l objc -p ios -o ~/Desktop'
+      opts.separator "Example: ruby #{File.basename __FILE__} -l objc -p ios -o ~/Desktop"
       opts.separator ''
     end
 
@@ -255,10 +255,8 @@ class Hyphen
     if platforms == [:macos]
       # Bundles with the "osx" family will be displayed with a nice Finder icon in Dash
       family = "osx"
-    elsif platforms.count == 1
-      family = platforms.first.to_s
     else
-      family = "hyphen"
+      family = platforms.join("-")
     end
 
     `/usr/libexec/PlistBuddy -c "set :CFBundleName #{name}" #{plist_path.shellescape}`
@@ -266,7 +264,7 @@ class Hyphen
   end
 end
 
-Hyphen.new.run(ARGV)
+BetterAppleDocsets.new.run(ARGV)
 
 __END__
 
