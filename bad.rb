@@ -255,10 +255,11 @@ class BetterAppleDocsets
     if platforms == [:macos]
       # Bundles with the "osx" family will be displayed with a nice Finder icon in Dash
       family = "osx"
+    elsif platforms.count == 1
+      family = platforms.first.to_s
     else
-      family = platforms.join("-")
+      family = "bad"
     end
-
     `/usr/libexec/PlistBuddy -c "set :CFBundleName #{name}" #{plist_path.shellescape}`
     `/usr/libexec/PlistBuddy -c "set :DocSetPlatformFamily #{family}" #{plist_path.shellescape}`
   end
