@@ -22,7 +22,9 @@ ruby hyphen.rb --language=objc --platform=ios --output=~/Desktop
 # double-click the generated ~/Desktop/iOS_API_Reference.docset
 ```
 
-Run `./hyphen.rb --help` for the full command-line reference.
+Run `ruby hyphen.rb --help` for the full command-line reference.
+
+(You should repeat this after each major Xcode update to refresh your docset.)
 
 If you see this warning while adding your docset to Dash, simply ignore it and click _Install_:
 

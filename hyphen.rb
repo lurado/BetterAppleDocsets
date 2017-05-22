@@ -29,7 +29,7 @@ class Hyphen
     parser = OptionParser.new do |opts|
       opts.banner = 'Hyphen - Improving Apple’s API Reference in Dash'
       opts.separator ''
-      opts.separator 'Usage: hyphen [-l language] [-p platform] [-o output_path]'
+      opts.separator 'Usage: ruby hyphen.rb [-l language] [-p platform] [-o output_path]'
       opts.separator ''
       opts.on('-l', '--language LANGUAGE', LANGUAGES, "Language that should be kept. May be specified multiple times. Possible values: #{LANGUAGES.join(', ')}.") do |l|
         options[:languages] << l.to_sym
@@ -48,6 +48,9 @@ class Hyphen
         puts "Hyphen version #{VERSION}"
         exit
       end
+      opts.separator ''
+      opts.separator 'Example: ruby hyphen.rb -l objc -p ios -o ~/Desktop'
+      opts.separator ''
     end
 
     begin
