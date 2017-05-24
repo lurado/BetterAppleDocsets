@@ -15,9 +15,12 @@ BetterAppleDocsets is a [Ruby script](./bad.rb) that extracts a configurable sub
 
 ## Quick start
 
+Make sure you've got the latest "Apple API Reference" installed in Dash. Then run the 
+following commands in your Terminal:
+
 ```bash
 gem install sqlite3 # or "sudo gem install sqlite3" if you use Apple’s Ruby
-curl -O https://github.com/lurado/BetterAppleDocs/raw/master/bad.rb
+curl -O https://raw.githubusercontent.com/lurado/BetterAppleDocsets/master/bad.rb
 ruby bad.rb --language=objc --platform=ios --output=~/Desktop
 # this takes a while, let it run in the background...
 # double-click the generated ~/Desktop/iOS_API_Reference.docset
