@@ -4,7 +4,6 @@ require 'fileutils'
 require 'shellwords'
 require 'open3'
 require 'optparse'
-require 'bundler'
 require 'sqlite3'
 
 class BetterAppleDocsets
